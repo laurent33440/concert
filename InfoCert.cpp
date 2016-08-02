@@ -131,6 +131,13 @@ CString CConcertoDlg::Sign(int type)
 					signature+=",";
 			}
 			titre="Signature piste d'audit";
+			//
+			if(fdev==1)
+			{
+				//Logger* log = Logger::getInstance(this);
+				//log->Log(" Signature audit : "+signature);
+			}
+			//
 		}
 		break;
 	case 2://signature ticket
@@ -144,6 +151,13 @@ CString CConcertoDlg::Sign(int type)
 				}
 			}
 			titre="Signature ticket";
+			//
+			if(fdev==1)
+			{
+				//Logger* log = Logger::getInstance(this);
+				//log->Log(" Signature ticket : "+signature);
+			}
+			
 		}
 		break;
 	case 3://signature grand total ticket ?
@@ -196,6 +210,13 @@ CString CConcertoDlg::Sign(int type)
 				}
 			}
 			titre="Signature archive période";
+			//
+			if(fdev==1)
+			{
+				//Logger* log = Logger::getInstance(this);
+				//log->Log(" Signature archive période : "+signature);
+			}
+			//
 		}
 		break;
 	case 7://signature archive exercice

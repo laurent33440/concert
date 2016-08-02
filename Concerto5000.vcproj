@@ -72,7 +72,7 @@
 				AdditionalDependencies="ZipArchive.lib gdiplus.lib Setupapi.lib Kernel32.lib Winmm.lib Mpr.lib"
 				OutputFile="Concert.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;D:\LOGICIEL\DINO\ZipArchive library\ZipArc\debug mfc md dll&quot;"
+				AdditionalLibraryDirectories="&quot;D:\LOGICIEL\DINO\ZipArchive library\ZipArchive\Debug Unicode MFC MD DLL&quot;;&quot;D:\LOGICIEL\DINO\ZipArchive library\ZipArchive\Release MFC MT&quot;;&quot;D:\LOGICIEL\DINO\ZipArchive library\ZipArc\debug mfc md dll&quot;"
 				ManifestFile="Concerto.intermediate.manifest"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -428,6 +428,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Logger.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Message.cpp"
 				>
 			</File>
@@ -542,11 +546,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GdiplusBase.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Ident.h"
 				>
 			</File>
 			<File
 				RelativePath="c:\users\barmatic\appdata\local\temp\rar$drb0.539\Key.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Logger.h"
 				>
 			</File>
 			<File
@@ -567,6 +579,10 @@
 			</File>
 			<File
 				RelativePath=".\SimPrint.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Singleton.h"
 				>
 			</File>
 			<File

@@ -148,7 +148,7 @@ void CConcertoDlg::OnEnMaxtextLibel1()//passage auto sur l'edit libel 2
 {
 	CloseKeyboard();
 	slibel2.SetFocus();
-	slibel2.PostMessage(memmes,memw,meml);	// TODO: Add your control notification handler code here
+	slibel2.PostMessage(memmes,memw,meml);	
 }
 void CConcertoDlg::OnEnSetfocusLibelspect()
 {
@@ -595,6 +595,7 @@ void CConcertoDlg::OnStnClickedVpass()
 	}
 }
 
+// case EXO cochée
 void CConcertoDlg::OnStnClickedVexo()
 {
 	int idx=artnum+(artrange*NAPP);
@@ -609,10 +610,10 @@ void CConcertoDlg::OnStnClickedVexo()
 		if((artro==0||fadmin))
 		{
 			CloseKeyboard();		
-			if(valexo)
+			if(valexo) //exo coché
 			{
 				valexo=0;
-				if(entrymode[idx]==0)
+				if(entrymode[idx]==0) // entree immediate 
 				{
 					ncons.ShowWindow(1);
 					ncons.SetWindowTextA(txtc[66]);//Nb Items
@@ -632,13 +633,14 @@ void CConcertoDlg::OnStnClickedVexo()
 			else
 			{
 				ltmp.ResetContent();
-				for(j=1;j<=NART;j++)
+				for(j=1;j<=NART;j++)// cherche EXO
 				{
 					if((prix[j]==0&&(libel1[j]!=""||libel2[j]!=""))&&((entrymode[idx]==0&&((conso[j]&0x00FF)==0&&(perso[j]&1)))||(entrymode[idx]>0&&(conso[j]&0x00FF)>0)))
-						ltmp.SetItemData(ltmp.AddString(libel1[j]+libel2[j]),j);						
+						ltmp.SetItemData(ltmp.AddString(libel1[j]+libel2[j]),j);	// les EXO					
 				}
 				if(ltmp.GetCount()>0)
 				{
+					valexo=0;
 					CCombo dlg;
 					vexo.GetWindowRect(&dlg.rctstat);
 					dlg.rctstat.top=dlg.rctstat.bottom;
@@ -646,9 +648,11 @@ void CConcertoDlg::OnStnClickedVexo()
 					dlg.type=5;
 					dlg.DoModal();
 					if(dlg.sel>=0)
+						valexo=(int)ltmp.GetItemData(dlg.sel); // n°article qui est exo 1..99
+					dlg.DestroyWindow();
+					if(valexo>0)
 					{
-						valexo=(int)ltmp.GetItemData(dlg.sel);
-						if(entrymode[idx]==0)
+						if(entrymode[idx]==0)// entree immediate 
 						{
 							ncons.ShowWindow(1);
 							ncons.SetWindowTextA(txtc[146]);//Nb Exo
@@ -678,7 +682,6 @@ void CConcertoDlg::OnStnClickedVexo()
 						}
 						temp1.Format("%u",conso[idx]);
 					}
-					dlg.DestroyWindow();
 				}
 				else
 				{

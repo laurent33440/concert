@@ -94,8 +94,7 @@ BOOL CConcertoApp::InitInstance()
 			break;
 		Sleep(500);
 	}
-	/*
-
+	
 	if(::FindWindow(NULL,"EXPLOCK")==NULL)// Recherche si le bloqueur d'explorer Windows a été lancé
 	{// Si non tente de le relancer
 		ZeroMemory( &csui, sizeof(csui) );
@@ -115,7 +114,7 @@ BOOL CConcertoApp::InitInstance()
 		CloseHandle(cpi.hProcess);
 		CloseHandle(cpi.hThread);
 	}
-	*/
+	
 	dlg.RUNRS=0;
 	dlg.STOPRS=0;
 	dlg.STOP=0;

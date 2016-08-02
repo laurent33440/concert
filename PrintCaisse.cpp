@@ -811,7 +811,8 @@ void CConcertoDlg::PrintCaisse(CString GTZtxt,CString ouverture,CString cloture,
 			rct.right=(LONG)(5*(xl1-10)/5);
 			pdc->SelectObject(&miw);
 			temp.Format("%.2f",can);
-			pdc->DrawText(temp,-1,&rct,DT_RIGHT|DT_SINGLELINE|DT_TOP|DT_NOPREFIX  );
+			if(temp != "0.00")// on imprime un total annulé significatif
+				pdc->DrawText(temp,-1,&rct,DT_RIGHT|DT_SINGLELINE|DT_TOP|DT_NOPREFIX  );
 			if(infocert)
 			{
 				if(paravent)
@@ -824,7 +825,7 @@ void CConcertoDlg::PrintCaisse(CString GTZtxt,CString ouverture,CString cloture,
 					rct.top+=hauteur/30;//60;
 					rct.bottom+=hauteur/30;//60;
 				}
-				//if(gta!=""&&(code==codemanager||code==codeadmin||code==codereseller))
+				if(gta!=""&&(code==codemanager||code==codeadmin||code==codereseller))
 				{
 					temp="GTA : "+gta;
 					rct.left=(LONG)x1+10;
@@ -834,11 +835,11 @@ void CConcertoDlg::PrintCaisse(CString GTZtxt,CString ouverture,CString cloture,
 					rct.left=(LONG)((xl1-10)/2);
 					rct.right=(LONG)(xl1-10);
 				}
-				/*else
+				else
 				{
 					rct.left=(LONG)x1+10;
 					rct.right=(LONG)(xl1-10);
-				}*/
+				}
 				temp.Format("%.2f",ca);
 				temp="GTZ : "+temp;
 				pdc->SelectObject(&mid);

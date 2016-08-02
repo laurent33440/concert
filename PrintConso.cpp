@@ -6,6 +6,7 @@
 #define new DEBUG_NEW
 #endif
 
+//bas ticket conso
 void CConcertoDlg::PrintConso(CDC* pdc,int idx,CString ticket,CString libelle,CString prix,CString tvatxt1,CString tvatxt2,CString part,CBitmap* pcodebarre,int fenter) 
 {
 	CString temp;

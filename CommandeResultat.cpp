@@ -95,9 +95,7 @@ void CConcertoDlg::OnBnClickedBilcancel()
 				//MessageBox("1= "+bilan);
 				if(cession.Find(nbil,idstop)==-1 && (nbil.Find("X",0)==-1))// ticket non trouve dans une ligne d'annulation
 				{
-					
-				
-					if(infocert==1)// Fenetre de dialogue du motif d'annulation
+					// ANNULATION TICKET AUTORISE POUR PAYS NON NF 525 -- if(infocert==1)// Fenetre de dialogue du motif d'annulation 
 					{
 						CMessage dlg;
 						dlg.mes1="Motif d'annulation";
@@ -163,7 +161,6 @@ void CConcertoDlg::OnBnClickedBilcancel()
 					temp1+=",-"+temp;
 					temp1.Replace(".","");
 					double valeur=-val1[artidx]-val2[artidx];
-
 
 					spart[0]=temp1;
 					temp1.Format("%.2f",valeur);

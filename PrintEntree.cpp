@@ -20,7 +20,7 @@ int CConcertoDlg::DrawLogo(CDC* pdc,float xl1)
 	CStringW wstr;
 	CString temp=workdir+"\\Logo.jpg";
 	CFileStatus cfs;
-	if(noprint)
+	if(noprint || !paravent )
 		dh=100;// hauteur max du logo
 	else
 		dh=150;// hauteur max du logo
@@ -506,15 +506,15 @@ int CConcertoDlg::PrintEntree(CDC* pdc,int idx,CString ticket,CString libelle,CS
 				rct.top+=hauteur/40;//60;
 				rct.bottom+=hauteur/20;//60;
 			}
-			if(!logo||paravent)
+			//if(!logo||paravent) // DANS TOUS LES CAS ON IMPRIME LE NOM ET LE LOGO (NF525 pour le nom)
 			{
-			if(paravent)
-				pdc->SelectObject(&num);
-			else
-				if(logo==0)
-					pdc->SelectObject(&tpf);
+				if(paravent)
+					pdc->SelectObject(&num);
 				else
-					pdc->SelectObject(&mic);
+					if(logo==0)
+						pdc->SelectObject(&tpf);
+					else
+						pdc->SelectObject(&mic);
 				pdc->DrawText(nom,-1,&rct,DT_CENTER|DT_SINGLELINE|DT_TOP|DT_NOPREFIX );
 				if(paravent||logo==0)
 				{
@@ -569,7 +569,7 @@ int CConcertoDlg::PrintEntree(CDC* pdc,int idx,CString ticket,CString libelle,CS
 				rct.bottom+=hauteur/30;//40;
 			}
 			pdc->SelectObject(&miw);
-			if(cvalpass&&((perso[idx]&0xF000)>>12)>1)
+			if(cvalpass&&((perso[idx]&0xF000)>>12)>1)//prevente
 			{	
 				temp.Format("%u",(perso[idx]&0xF000)>>12);
 				temp1=txtc[153];//Valable % jours

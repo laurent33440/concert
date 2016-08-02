@@ -4,7 +4,7 @@
 // Version 5.000 => Gestion impression ticket annulation avec type d'opétation X suivant recommandation Infocert | Modification traitement données ticket annulé dans FillTicketList | 
 // Correction TVA globale | Modification gestion MAJ fichier controle esclave | Correction 8 chiffres clavier démarrage | Correction libération liste lnbp après passage en Maitre Auto | 
 // Déplacement vérification de l'intégrité des fichiers pour éviter blocage au redémarrage | Passage en entrée immédiate d'office après prévente(bouton Mode entrée) | 
-// Correction changement de langue dans les esclaves | Mise à 1 par défaut des items d'article même vide | Ecran Articles  : modification affichage suivant case à cocher "Entrée" => Entree immediate / Produit
+// Correction changement de langue dans les esclaves | Mise à 1 par défaut des items d'article même vide 
 
 // Version 4.630 => Insertion code NAF | Impression TVA siret/naf extrait signature sur talon | modification logo NF525 | ajout transfert naf dans les articles | Copier/Coller article
 // Blocage billetterie si naf, siret, nom ou adresse manquent | correction vidage buffer scan si pas en controle | affichage du code scanné en vert ou rouge suivant validité pendant 10 secondes
@@ -68,6 +68,7 @@
 #include "Ident.h"
 #include "SimPrint.h"
 #include "Combo.h"
+#include "Logger.h"
 
 #define NBK 1				// NOMBRE DE CLE BLUETOOTH DANS LA MACHINE.
 #define topline 20				// repère decoupe ticket.
@@ -537,12 +538,12 @@ public:
 	int fupdate;// flag update présent
 	int master;// flag master
 	//cases à cocher
-	int valplace;
-	int valmix;
+	int valplace; //est placé 
+	int valmix; // 
 	int valscr;
-	int valentry;
-	int valactif;
-	int cbx;
+	int valentry; // est une entree
+	int valactif; // est actif
+	int cbx; // n° code barre 
 	int nvalmix;//Validation des packs à 2 TVA
 	int cvalpass;// validation config du pass
 	int nvalplace;// Validation du N° de place
@@ -598,12 +599,13 @@ public:
 	double val2[100];
 	int cscan[100]; //nb de scan
 	int conso[100]; // nb item
-	int perso[100]; // paramètres de l'article
+	int perso[100]; // paramètres de l'article : perso[idx]=valentry+(valplace*2)+(valmix*4)+(valactif*8)+(valexo*0x10)+(valpass*0x1000)+ (cbx*0xff0000);
 	int target[100]; // correspondance article <-> article ds fichier controle. Index n° touche ( voir ThreadEthernet)  
 	int spectsel[100]; // 
 	int choraire[100]; // horaire ou pas sur l'article
-	int entrymode[100]; //  0=entree immédiate,1=prévente sans horaire,2=1=prévente avec horaire
+	int entrymode[100]; //  0=entree immédiate,1=prévente sans horaire,2=prévente avec horaire
 	int ne[17]; // nb entrees scannees
+
 	float oltou;
 	float ltou;
 	float eltou;

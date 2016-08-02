@@ -918,27 +918,24 @@ void CConcertoDlg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 	}
 	if(nIDCtl==IDC_BUSER)
 	{
-		Graphics gr (pdc->m_hDC);
-		rct=lpDrawItemStruct->rcItem;
-		RectF rctf(0,0,(REAL)rct.Width(),(REAL)rct.Height());
-		pdc->SelectObject(&geodate);
-		pdc-> SetBkMode(TRANSPARENT);
-		if(!(lpDrawItemStruct->itemState & ODS_SELECTED)&&wsel!=2)
+		if(!fadmin)//"Code Util"
 		{
-			gr.DrawImage(pbnpomo,rctf);
-			pdc->SetTextColor(0xFFFFFF);
-		}
-		else 
-		{
-			gr.DrawImage(pbspomo,rctf);
-			pdc->SetTextColor(0xFFFFFF);
-		}
-		if(fadmin)//"RAZ CB ETC"
-		{
-			pdc->DrawText(txtc[25],-1,&lpDrawItemStruct->rcItem,DT_CENTER|DT_SINGLELINE|DT_VCENTER );//RAZ CB ETC
-		}
-		else//"Code Util"
-		{
+			Graphics gr (pdc->m_hDC);
+			rct=lpDrawItemStruct->rcItem;
+			RectF rctf(0,0,(REAL)rct.Width(),(REAL)rct.Height());
+			pdc->SelectObject(&geodate);
+			pdc-> SetBkMode(TRANSPARENT);
+			if(!(lpDrawItemStruct->itemState & ODS_SELECTED)&&wsel!=2)
+			{
+				gr.DrawImage(pbnpomo,rctf);
+				pdc->SetTextColor(0xFFFFFF);
+			}
+			else 
+			{
+				gr.DrawImage(pbspomo,rctf);
+				pdc->SetTextColor(0xFFFFFF);
+			}
+			
 			pdc->DrawText(txtc[26],-1,&lpDrawItemStruct->rcItem,DT_CENTER|DT_SINGLELINE|DT_VCENTER );//Code Util
 		}
 	}

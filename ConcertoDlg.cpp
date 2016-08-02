@@ -2554,6 +2554,14 @@ retry_OpenPrinter1:;
 				tnet.SetWindowTextA("HRAU");
 	}
 
+	Logger* log = Logger::getInstance(this);
+	if(fdev==1)//log on dev
+	{
+		log->Log("=========== STARTING LOG CONCERTO ===========");
+	}else{ // erase LOG if exists
+		log->DeleteLog();
+	}
+
 	DrawWindowConcert();
 
 	return TRUE;  // retourne TRUE, sauf si vous avez défini le focus sur un contrôle
@@ -5659,7 +5667,7 @@ void CConcertoDlg::FillStat(int index)
 	guichet.EnableWindow(0);
 	slibel1.SetWindowTextA(libel1[index]);
 	slibel2.SetWindowTextA(libel2[index]);
-	if(libel1[index]==""&&libel2[index]=="")
+	if(libel1[index]==""&&libel2[index]=="")//article vide
 	{
 		libelcons[index]="";
 		prix[index]=0;
@@ -5763,15 +5771,15 @@ void CConcertoDlg::FillStat(int index)
 			valactif=0;
 		vpass.ShowWindow(0);
 		valpass=0;
-		if(entrymode[index]>0)//fprev&&
+		if(entrymode[index]>0)//prévente sans horaire,prévente avec horaire
 		{
 			vplace.ShowWindow(0);
 			vmix.ShowWindow(0);
 			ventry.ShowWindow(0);
-			if(cvalpass)
+			if(cvalpass)//coche Pass active
 			{
 				vpass.ShowWindow(1);
-				if((valpass=(perso[index]&0xF000)>>12)>1)
+				if((valpass=(perso[index]&0xF000)>>12)>1)//Exo associé?
 				{
 					vexo.ShowWindow(1);
 				}
@@ -5786,7 +5794,7 @@ void CConcertoDlg::FillStat(int index)
 				vpass.ShowWindow(0);
 			}
 		}
-		else
+		else//entree immediate ou produit
 		{
 			ventry.ShowWindow(1);
 			if(valentry==0)
@@ -5870,22 +5878,22 @@ void CConcertoDlg::FillStat(int index)
 		{
 			nlibelcons.ShowWindow(1);
 			slibelcons.ShowWindow(1);
-			if(valexo>0&&valentry==0)
+			if(valexo>0&&valentry==0)//pas une entree et exo
 			{
 				ncons.ShowWindow(1);
 				ncons.SetWindowTextA(txtc[146]);//Nb Exo
 				scons.ShowWindow(1);
 			}
-			if(valexo==0&&valentry==0)
+			if(valexo==0&&valentry==0)//pas une entree pas d'exo
 			{
 				scons.ShowWindow(1);
-				ncons.SetWindowTextA(txtc[66]);//Nb Exo
+				ncons.SetWindowTextA(txtc[66]);//Nb Items
 				ncons.ShowWindow(1);
 			}
 			if(valentry==1)
 			{
 				scons.ShowWindow(1);
-				ncons.SetWindowTextA(txtc[66]);//Nb Exo
+				ncons.SetWindowTextA(txtc[66]);//Nb Items
 				ncons.ShowWindow(1);
 			}
 		}
@@ -5945,7 +5953,8 @@ void CConcertoDlg::FillStat(int index)
 			spect.EnableWindow(1);
 			guichet.EnableWindow(1);
 			slibel1.EnableWindow(1);
-			slibel2.EnableWindow(0);
+			slibel2.EnableWindow(1);
+			//slibel2.EnableWindow(0);
 		}
 		else
 		{
@@ -5964,23 +5973,30 @@ void CConcertoDlg::FillStat(int index)
 			scons.EnableWindow(1);
 		}
 	}
-	if(eflag==1)
+	if(eflag==1)// Code Barre ETC
 	{
 		BYTE bcons;
-		if(valexo>0)
+		if(valexo>0)//exo (n°article) associe à l'article
 		{
-			bcons=(BYTE)(((conso[index]&0xFF00)>>8));
+			bcons=(BYTE)(((conso[index]&0xFF00)>>8));//recupere ne nb de conso de l'article dans le cas ou il est associé à un exo
 			bcons++;
 		}
-		else
-			bcons=(BYTE)(conso[index]&0xFF);
-		/*temp1.Format(" bcons= %u",bcons);
-		temp.Format(" conso= %u -> ",conso[index]);
-		MessageBox(temp+temp1);*/
-		if(bcons>0)
+		else // pas d'exo associe
+			bcons=(BYTE)(conso[index]&0xFF);//nb conso
+		if(index == 38 || index == 55){
+ 			temp1.Format(" bcons= %u",bcons);
+			temp.Format(" conso= %u -> ",conso[index]);
+			MessageBox(temp+temp1);
+		}
+		if(bcons>0) //nb conso >0
 		{
 			vcbx.ShowWindow(1);
 			cbx = (perso[index]& 0xff0000)>>16;
+			if(index == 38|| index == 55){
+ 				temp1.Format(" bcons= %u",bcons);
+				temp.Format(" cbx= %u :: lp get count : %u ",cbx,pl.GetCount());
+				MessageBox(temp+temp1);
+			}
 			if(cbx <= pl.GetCount())
 			{
 				vcbx.SetWindowText("");//redessine

@@ -120,7 +120,8 @@ retry:;
 		}
 		else
 		{
-			impperso=(DWORD)atoi(article.Mid(idx,j-idx))&0xFFFFFFF7;
+			//impperso=(DWORD)atoi(article.Mid(idx,j-idx))&0xFFFFFFF7;//valactif ignoré...
+			impperso=(DWORD)atoi(article.Mid(idx,j-idx));
 
 		}
 

@@ -36,6 +36,10 @@
 #define _AFX_ALL_WARNINGS
 
 #define _CRT_RAND_S
+
+// *** REQUIERED FOR DEBUG MODE TO COMPILE
+#include <afxcoll.h>
+// ***
 #include <ZipArchive.h>
 #include <afxwin.h>         // composants MFC principaux et standard
 #include <afxext.h>         // extensions MFC
@@ -48,7 +52,12 @@
 #include <atlcrypt.h>        // Classes MFC Automation
 #include <WinCrypt.h>
 #include <afxdisp.h>        // Classes MFC Automation
-#include <gdiplus.h>
+//*** Debug Mode
+#include "GdiplusBase.h"
+//***
+//*** Release Mode
+//#include <gdiplus.h>
+//***
 #include <gl\Gl.h>
 #include <gl\Glu.h>
 #include "Sddl.h"

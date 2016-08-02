@@ -444,7 +444,7 @@ int CConcertoDlg::PrintPrevente(CDC* pdc,int idx,CString billet,CString libelle,
 			rct.top+=hauteur/40;//60;
 			rct.bottom+=hauteur/20;//60;
 		}
-		if(logo==0||paravent)
+		//if(logo==0||paravent)// DANS TOUS LES CAS ON IMPRIME LE NOM ET LE LOGO (NF525 pour le nom)
 		{
 			if(paravent)
 				pdc->SelectObject(&num);

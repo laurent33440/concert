@@ -278,7 +278,6 @@ void CCombo::CloseCombo()
 void CCombo::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialog::OnShowWindow(bShow, nStatus);
-	// TODO: Add your message handler code here
 }
 
 void CCombo::OnTimer(UINT_PTR nIDEvent)
@@ -288,21 +287,23 @@ void CCombo::OnTimer(UINT_PTR nIDEvent)
 		KillTimer(1);
 		CConcertoDlg* par;
 		CMessage* mar;
-		if(type<6)
+		if(type==6)
+		{
+			mar=(CMessage*)GetParent();
+			mar->pcombo=this;
+			
+		}
+		else
 		{
 			par=(CConcertoDlg*)GetParent();
 			par->pcombo=this;
 		}
-		else
-		{
-			mar=(CMessage*)GetParent();
-			mar->pcombo=this;
-		}
 	}
-	// TODO: Add your message handler code here and/or call default
 
 	CDialog::OnTimer(nIDEvent);
 }
+
+
 
 void CCombo::OnDestroy()
 {
@@ -310,7 +311,7 @@ void CCombo::OnDestroy()
 
 	CConcertoDlg* par;
 	CMessage* mar;
-	if(type=6)
+	if(type==6)
 	{
 		mar=(CMessage*)GetParent();
 		mar->pcombo=NULL;

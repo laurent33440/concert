@@ -166,7 +166,7 @@ void CConcertoDlg::PrintNews(CString ouverture,CString cloture,CString GTZtxt,CS
 		rct.left=0;
 		rct.right=(LONG)xl1;
 		pdc->FillSolidRect(&rct,bc);
-		if(printername.Find("KPSX")==-1&&printername.Find("KMGA")==-1&&printername.Find("Citizen CL-S400DT")==-1)
+		if(printername.Find("KPSX")==-1&&printername.Find("KMGA")==-1&&printername.Find("Citizen CL-S400DT")==-1)//pas d'imprimante reconnue
 		{
 			CPen boldpen(PS_SOLID,hauteur/200,pencolor);
 			if(!noprint)
@@ -276,6 +276,7 @@ void CConcertoDlg::PrintNews(CString ouverture,CString cloture,CString GTZtxt,CS
 				rct.left=rct.right;
 				rct.right=(LONG)(xl1-10);
 				pdc->SelectObject(&miw);
+				
 				if(ATICK=="")
 					pdc->DrawText(PTICK,-1,&rct,DT_RIGHT|DT_SINGLELINE|DT_TOP );
 				else
@@ -317,7 +318,7 @@ void CConcertoDlg::PrintNews(CString ouverture,CString cloture,CString GTZtxt,CS
 			else
 				tsorg=rct.bottom;
 		}
-		else
+		else //imprimantes trouvees
 		{
 			CPen boldpen(PS_SOLID,hauteur/500,pencolor);
 			pdc->SelectObject(&mid);
@@ -392,6 +393,7 @@ void CConcertoDlg::PrintNews(CString ouverture,CString cloture,CString GTZtxt,CS
 				{
 					NTICK=cession.Mid(idx,i-idx);
 					PARTICK=NTICK.Right(3);
+					ATICK = NTICK.Left(1);// récupère le type de ticket A,B,P,X
 				}
 				else
 					break;
@@ -412,9 +414,7 @@ void CConcertoDlg::PrintNews(CString ouverture,CString cloture,CString GTZtxt,CS
 				if((i=cession.Find(";",idx))==-1)
 					break;
 				idx=i+1;
-				if((i=cession.Find("\r\n",idx))!=-1)
-					ATICK=cession.Mid(idx,i-idx);
-				else
+				if((i=cession.Find("\r\n",idx))==-1)
 					break;
 				rct.left=(LONG)lmarge+10;
 				rct.right=(LONG)(3*(xl1-10)/5);
@@ -436,8 +436,10 @@ void CConcertoDlg::PrintNews(CString ouverture,CString cloture,CString GTZtxt,CS
 				rct.left=(LONG)lmarge+10;
 				rct.right=(LONG)(4*(xl1-10)/5);
 				pdc->SelectObject(&miw);
-				pdc->DrawText(hlibel1[artidx]+ " "+hlibel2[artidx],-1,&rct,DT_LEFT|DT_SINGLELINE|DT_TOP|DT_NOPREFIX );
-
+				if(ATICK!="X")
+				{
+					pdc->DrawText(hlibel1[artidx]+ " "+hlibel2[artidx],-1,&rct,DT_LEFT|DT_SINGLELINE|DT_TOP|DT_NOPREFIX );
+				}
 				rct.left=rct.right;
 				rct.right=(LONG)(xl1-10);
 				pdc->SelectObject(&miw);

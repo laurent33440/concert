@@ -321,7 +321,7 @@ void CConcertoDlg::UpdateDEntreeListe(int num)
 	CString temp;
 	if(afmode==0||wsel==4)
 		UpdateEntreeListe(num);
-	else
+	else //Borne 
 	{
 		int idx=num+(artrange*NAPP);
 		if (etc==1&&code!=codeuser&&master)
@@ -2001,7 +2001,7 @@ void CConcertoDlg::OnBnClickedManager()
 			if(code.Find(codeaudit,0)==0)
 			{
 				if(code.GetLength()>codeaudit.GetLength())
-					faudit=atoi(code.Mid(codeaudit.GetLength(),1));
+					faudit=atoi(code.Mid(codeaudit.GetLength(),1)); //code auditeur + n°filtre
 				else
 					faudit=0;
 				if(faudit>0)

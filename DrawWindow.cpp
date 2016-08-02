@@ -759,7 +759,7 @@ RETRY_LIC1:
 	etdate=0;
 }
 
-void CConcertoDlg::FillTicketList(CString filename)
+void CConcertoDlg::FillTicketList(CString filename)// fichier Concert.dat du jour et de l'heure de la cession
 {
 	CString temp1;
 	HRAZ=0;
@@ -809,6 +809,13 @@ void CConcertoDlg::FillTicketList(CString filename)
 		InterlockedExchange(&artro,0);
 	else
 	{
+		//if(fdev==1)//log on dev
+		//{
+		//	CString tmp;
+		//	Logger* log = Logger::getInstance(this);
+		//	tmp = filename.GetString();
+		//	log->Log(tmp);
+		//}
 		cession=CRead(filename);
 		if(cession=="")
 		{
@@ -848,14 +855,14 @@ void CConcertoDlg::FillTicketList(CString filename)
 			ca=can=cof=0;
 			idx=cession.Find("\r\n",0);
 			temp=cession.Left(idx);// on réduit à la première ligne
-			if((idy=temp.Find(";",0))!=-1)
+			if((idy=temp.Find(";",0))!=-1) //premiere ligne Concert.dat
 			{
-				cesver=atoi(temp.Mid(idy+1,3));
-				ouverture=temp.Mid(5,idy-5);
+				cesver=atoi(temp.Mid(idy+1,3));//version au centieme
+				ouverture=temp.Mid(5,idy-5);//
 			}
 			else
 			{
-				cesver=0;
+				cesver=0; // ??
 				ouverture=temp.Mid(5);
 
 			}
@@ -863,6 +870,7 @@ void CConcertoDlg::FillTicketList(CString filename)
 			idx+=2;
 			idxmem=idx;// positionnement premier ticket en mémoire 
 			ltmp.ResetContent();
+			
 			if(cesver<500)
 			{
 				do	// Recherche des tickets annulés répertoriés dans ltmp
