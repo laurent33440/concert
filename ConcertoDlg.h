@@ -189,7 +189,6 @@ public:
 	void SetupComUSB();			// Ouvre un port COM sur un scanner USB
 	void SetupComGate();		// Ouvre un port COM sur interface bluetooth du tourniquet
 	void GetTargetAdress();		// Inscrit l'adresse bluetooth du premier scanner trouvé dans la clé
-	void SearchWEBShop();
 	CString GetRetStat(int,CString,CString);	// Renvoi le status de retour du périphérique sollicité en comparant les paramètres fournis
 	BOOL SendRS(CString);		// Envoi une chaine texte sur le port COM d'une clé
 	void SendSpot(BYTE);		// Envoi la couleur du résultat du controle vers l'embase du scanner par la clé bluetooth
@@ -286,7 +285,8 @@ public:
 	void DeleteCrypto();	// ferme la crypto pour la signature électronique
 
 	//************** COMMUNICATIONS AVEC LOOTY ***********************************************
-	BOOL CConcertoDlg::ImportArticlesFromLooty();
+	void SearchWEBShop();
+	BOOL ImportArticlesFromLooty(BOOL bIsUpdate, BOOL bIsPendingSales);
 	BOOL CConcertoDlg::UpdateArticlesFromLooty();
 
 	

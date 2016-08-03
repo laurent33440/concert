@@ -4645,8 +4645,8 @@ void CConcertoDlg::OnTimer(UINT_PTR nIDEvent)
 	{	
 		if(FWEB==1){
 			KillTimer(18);
-			ImportArticlesFromLooty();// 
-			SetTimer(18,30000,NULL);
+			ImportArticlesFromLooty(false,(BOOL)artro);// on shot. Pas d'importation totale si vente en cours
+			SetTimer(18,30000,NULL); //FIXME 
 		}
 	}
 	if(nIDEvent==19&&master&&serveur!="")// maj articles de LOOTY si connecté

@@ -382,9 +382,10 @@ void CConcertoDlg::SearchWEBShop()
 * Importation des articles de LOOTY de manière périodique. Voir TIMER n°18 voir CConcertoDlg::OnTimer
 * Structure URL :  http://<serveur>/terminal/api/cma/<identificateur borne> 
 * Article à partir du n°81 jusqu'à 99
+* Parameters : BOOL bIsPendingSales : true si des vente sont en cours, false sinon
 * Return true si importation ok, false sinon
 */
-BOOL CConcertoDlg::ImportArticlesFromLooty()
+BOOL CConcertoDlg::ImportArticlesFromLooty(BOOL bIsUpdate, BOOL bIsPendingSales=false)
 {
 	CString temp;
 	CString path;
@@ -460,204 +461,199 @@ BOOL CConcertoDlg::ImportArticlesFromLooty()
 					idx+=15;//debut 3éme ligne
 				/*else
 					goto ARTERROR;*/
-				while((idz=artbuf.Find("\r\n",idx))!=-1)// Passe en revue les lignes d'article
+				while ((idz = artbuf.Find("\r\n", idx)) != -1)// Passe en revue les lignes d'article
 				{
-					if(fdev==1)//log on dev
-						{
-							Logger* log = Logger::getInstance(this);
-							CString mess;
-							mess.Format(" index idz, idx :  %u %u",idz, idx);
-							log->Log(mess);
-						}
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// N° de l'article
+					if (fdev == 1)//log on dev
 					{
-						temp=artbuf.Mid(idx,idy-idx);
-						ida=atoi(temp);// index de l'article
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						Logger* log = Logger::getInstance(this);
+						CString mess;
+						mess.Format(" index idz, idx :  %u %u", idz, idx);
+						log->Log(mess);
+					}
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)// N° de l'article
+					{
+						temp = artbuf.Mid(idx, idy - idx);
+						ida = atoi(temp);// index de l'article
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("Index article:  "+temp+" index idx : %u",idx);
+							mess.Format("Index article:  " + temp + " index idx : %u", idx);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// libelle1
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)// libelle1
 					{
-						artlibelle1=artbuf.Mid(idx,idy-idx);
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						artlibelle1 = artbuf.Mid(idx, idy - idx);
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("libelle1 article:  "+artlibelle1+" index idx : %u",idx);
+							mess.Format("libelle1 article:  " + artlibelle1 + " index idx : %u", idx);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// libelle2
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)// libelle2
 					{
-						artlibelle2=artbuf.Mid(idx,idy-idx);
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						artlibelle2 = artbuf.Mid(idx, idy - idx);
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("libelle2 article:  "+artlibelle2+" index idx : %u",idx);
+							mess.Format("libelle2 article:  " + artlibelle2 + " index idx : %u", idx);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// libelle3
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)// libelle3
 					{
-						artlibelcons=artbuf.Mid(idx,idy-idx);
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						artlibelcons = artbuf.Mid(idx, idy - idx);
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("libelle3 article:  "+artlibelcons+" index idx : %u",idx);
+							mess.Format("libelle3 article:  " + artlibelcons + " index idx : %u", idx);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// PRIX TTC
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)// PRIX TTC
 					{
-						artprix=atof(artbuf.Mid(idx,idy-idx));
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						artprix = atof(artbuf.Mid(idx, idy - idx));
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("prix article:  %.2f",artprix);
+							mess.Format("prix article:  %.2f", artprix);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)//  TVA1
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)//  TVA1
 					{
-						arttva1=atof(artbuf.Mid(idx,idy-idx));
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						arttva1 = atof(artbuf.Mid(idx, idy - idx));
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("tva1 article:  %.2f",arttva1);
+							mess.Format("tva1 article:  %.2f", arttva1);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// Val TVA1
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)// Val TVA1
 					{
-						artval1=atof(artbuf.Mid(idx,idy-idx));
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						artval1 = atof(artbuf.Mid(idx, idy - idx));
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("val tva1 article:  %.2f",artval1);
+							mess.Format("val tva1 article:  %.2f", artval1);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// TVA2
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)// TVA2
 					{
-						arttva2=atof(artbuf.Mid(idx,idy-idx));
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						arttva2 = atof(artbuf.Mid(idx, idy - idx));
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("tva2 article:  %.2f",arttva2);
+							mess.Format("tva2 article:  %.2f", arttva2);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// val TVA2
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)// val TVA2
 					{
-						artval2=atof(artbuf.Mid(idx,idy-idx));
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						artval2 = atof(artbuf.Mid(idx, idy - idx));
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("val tva2 article:  %.2f",artval2);
+							mess.Format("val tva2 article:  %.2f", artval2);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// Parametre article
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)// Parametre article
 					{
-						artperso=atoi(artbuf.Mid(idx,idy-idx));
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						artperso = atoi(artbuf.Mid(idx, idy - idx));
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("perso article:  %u",artperso);
+							mess.Format("perso article:  %u", artperso);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// Qté
+					if ((idy = artbuf.Find(";", idx)) != -1 && idy <= idz)// Qté
 					{
-						artconso=atoi(artbuf.Mid(idx,idy-idx));
-						idx=idy+1;
-						if(fdev==1)//log on dev
+						artconso = atoi(artbuf.Mid(idx, idy - idx));
+						idx = idy + 1;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("Qté article:  %u",artconso);
+							mess.Format("Qté article:  %u", artconso);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					//if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// Qté
-					//{
-					//	artlibelcons=artbuf.Mid(idx,idy-idx);
-					//	idx=idy+2;
-					//}
-					//else
-					//	goto ARTERROR;
-					if((idy=artbuf.Find("\r\n",idx))!=-1&&idy<=idz)// type d'entree
+					if ((idy = artbuf.Find("\r\n", idx)) != -1 && idy <= idz)// type d'entree
 					{
-						artmode=atoi(artbuf.Mid(idx,idy-idx));
-						idx=idy+2;
-						if(fdev==1)//log on dev
+						artmode = atoi(artbuf.Mid(idx, idy - idx));
+						idx = idy + 2;
+						if (fdev == 1)//log on dev
 						{
 							Logger* log = Logger::getInstance(this);
 							CString mess;
-							mess.Format("type entree article:  %u",artmode);
+							mess.Format("type entree article:  %u", artmode);
 							log->Log(mess);
 						}
 					}
 					else
 						goto ARTERROR;
-					libel1[ida]=artlibelle1;
-					libel2[ida]=artlibelle2;
-					libelcons[ida]=artlibelcons;
-					prix[ida]=artprix;
-					tva1[ida]=arttva1;
-					val1[ida]=artval1;
-					tva2[ida]=arttva2;
-					val2[ida]=artval2;
-					perso[ida]=artperso;
-					conso[ida]=artconso;
-					entrymode[ida]=artmode;
-					libelspect[ida]="";
-
+					if (!bIsPendingSales)// maj possible si vente non debutee
+					{
+						libel1[ida] = artlibelle1;
+						libel2[ida] = artlibelle2;
+						libelcons[ida] = artlibelcons;
+						prix[ida] = artprix;
+						tva1[ida] = arttva1;
+						val1[ida] = artval1;
+						tva2[ida] = arttva2;
+						val2[ida] = artval2;
+						conso[ida] = artconso;
+						entrymode[ida] = artmode;
+						libelspect[ida] = "";
+					}
+					perso[ida] = artperso; //(des)activation de l'article toujours possible 
 					//m a j modif article
 					//lna.SetItemData(lna.AddString("article"),ida);//liste des articles modifiés
 					// base registre
@@ -671,19 +667,22 @@ BOOL CConcertoDlg::ImportArticlesFromLooty()
 							mess.Format("index article base registre: "+art);
 							log->Log(mess);
 						}
-					pa->WriteProfileString(art,"LIBELLE1",libel1[ida]);
-					pa->WriteProfileString(art,"LIBELLE2",libel2[ida]);
-					pa->WriteProfileString(art,"LIBELCONS",libelcons[ida]);
-					pa->WriteProfileString(art,"LIBELSPECT",libelspect[ida]);
-					pa->WriteProfileInt(art,"PRIX",(int)(prix[ida]*100));
-					pa->WriteProfileInt(art,"TVA",(int)(tva1[ida]*100));
-					pa->WriteProfileInt(art,"PERSO",perso[ida]);
-					pa->WriteProfileInt(art,"CONSO",conso[ida]);
-					pa->WriteProfileInt(art,"VCONSO",entrymode[ida]);
-					pa->WriteProfileInt(art,"VALCONSO",entrymode[ida]);
-					pa->WriteProfileInt(art,"TVA2",(int)(tva2[ida]*100));
-					pa->WriteProfileInt(art,"VAL1",(int)(val1[ida]*100));
-					pa->WriteProfileInt(art,"VAL2",(int)(val2[ida]*100));
+					if (!bIsPendingSales)// maj possible si vente non debutee
+					{
+						pa->WriteProfileString(art, "LIBELLE1", libel1[ida]);
+						pa->WriteProfileString(art, "LIBELLE2", libel2[ida]);
+						pa->WriteProfileString(art, "LIBELCONS", libelcons[ida]);
+						pa->WriteProfileString(art, "LIBELSPECT", libelspect[ida]);
+						pa->WriteProfileInt(art, "PRIX", (int)(prix[ida] * 100));
+						pa->WriteProfileInt(art, "TVA", (int)(tva1[ida] * 100));
+						pa->WriteProfileInt(art, "CONSO", conso[ida]);
+						pa->WriteProfileInt(art, "VCONSO", entrymode[ida]);
+						pa->WriteProfileInt(art, "VALCONSO", entrymode[ida]);
+						pa->WriteProfileInt(art, "TVA2", (int)(tva2[ida] * 100));
+						pa->WriteProfileInt(art, "VAL1", (int)(val1[ida] * 100));
+						pa->WriteProfileInt(art, "VAL2", (int)(val2[ida] * 100));
+					}
+					pa->WriteProfileInt(art, "PERSO", perso[ida]); //(des)activation de l'article toujours possible 
 					//M a j articles pour esclave si maitre
 					FART=1;
 					RefreshArticle();
@@ -750,7 +749,12 @@ ARTERROR:;
 */
 BOOL CConcertoDlg::UpdateArticlesFromLooty()
 {
-	return true;
+	if (!artro)// maj totale possible si vente non debutee
+	{
+		return this->ImportArticlesFromLooty(false);
+	}else{ //vente(s) réalisée(s), maj uniquement de l'activation de l'article
+		return this->ImportArticlesFromLooty(true); 
+	}
 }
 
 
