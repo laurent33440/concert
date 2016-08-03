@@ -1,0 +1,346 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectTypes>{FE3BBBB6-72D5-11D2-9ACE-00C04F79A2A4}</ProjectTypes>
+    <ProjectName>Concerto 5.000</ProjectName>
+    <ProjectGuid>{7FDB8E0A-894D-4119-858B-01385816B937}</ProjectGuid>
+    <RootNamespace>Concerto 5.000</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.25123.0</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>D:\Temp\Concerto 462\Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>D:\Temp\Concerto 5000\Release\</IntDir>
+    <ExtensionsToDeleteOnClean>*.obj%3b*.ilk%3b*.tlb%3b*.tli%3b*.tlh%3b*.tmp%3b*.rsp%3b*.pgc%3b*.pgd</ExtensionsToDeleteOnClean>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+    <LinkIncremental>false</LinkIncremental>
+    <GenerateManifest>true</GenerateManifest>
+    <TargetName>Concert</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>false</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>D:\LOGICIEL\DINO\ZipArchive library\ZipArchive;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x040c</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>ZipArchive.lib;gdiplus.lib;Setupapi.lib;Kernel32.lib;Winmm.lib;Mpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>Concert.exe</OutputFile>
+      <AdditionalLibraryDirectories>D:\LOGICIEL\DINO\ZipArchive library\ZipArchive\Debug Unicode MFC MD DLL;D:\LOGICIEL\DINO\ZipArchive library\ZipArchive\Release MFC MT;D:\LOGICIEL\DINO\ZipArchive library\ZipArc\debug mfc md dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ManifestFile>Concerto.intermediate.manifest</ManifestFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo Copie sur Install
+copy "$(ProjectDir)\$(TargetFileName)"  "D:\LOGICIEL\DINO\Install Concerto\Install\Bin\Concert.dat"
+echo Modification du programme
+copy "$(ProjectDir)\$(TargetFileName)"  "C:\Program Files\Concerto"
+copy "$(ProjectDir)\$(TargetFileName)"  "C:\Program Files (x86)\Concerto"
+copy "*.lng" "C:\Program Files (x86)\Concerto"
+copy "French.lng"  "C:\Program Files\Concerto"
+copy "French.lng"  "C:\Program Files (x86)\Concerto"
+xcopy "$(ProjectDir)\Skin" "C:\Program Files\Concerto\Skin\" /e/y
+xcopy "$(ProjectDir)\Skin" "C:\Program Files (x86)\Concerto\Skin\" /e/y
+echo Copie sur F
+copy "$(ProjectDir)\$(TargetFileName)"  "F:\Concerto\Bin\Concert.dat"
+echo Copie sur G
+copy "$(ProjectDir)\$(TargetFileName)"  "G:\Concerto\Bin\Concert.dat"
+echo Modification Update x86
+rem "C:\Program Files (x86)\WinRAR\winrar.exe"  a "Concertupdate_4630.exe" "Concert.exe" "German.lng" "French.lng" "Italian.lng" "Dutch.lng" "Spanish.lng" "Portuguese.lng" "English.lng"
+"C:\Program Files (x86)\WinRAR\winrar.exe"  a -ma5 -htb -hp65748392 "Concertupdate_5000.exe" "Concert.exe" "German.lng" "French.lng" "Italian.lng" "Dutch.lng" "Spanish.lng" "Portuguese.lng" "English.lng"
+echo Modification Update
+rem "C:\Program Files\WinRAR\winrar.exe"  a "Concertupdate_5000.exe" "Concert.exe" "German.lng" "French.lng" "Italian.lng" "Dutch.lng" "Spanish.lng" "Portuguese.lng" "English.lng"
+"C:\Program Files\WinRAR\winrar.exe"  a -ma5 -htb -hp65748392 "Concertupdate_5000.exe" "Concert.exe" "German.lng" "French.lng" "Italian.lng" "Dutch.lng" "Spanish.lng" "Portuguese.lng" "English.lng"
+copy "Concertupdate_5000.exe"  "F:\Concertupdate_462.arb"
+copy "Concertupdate_5000.exe"  "G:\Concertupdate_5000.arb"
+copy "Concertupdate_462.exe"  "$(ProjectDir)\Concertupdate_5000.arb"
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <BuildLog>
+      <Path>$(IntDir)BuildLog.htm</Path>
+    </BuildLog>
+    <CustomBuildStep>
+      <Command>D:\LOGICIEL\Billet\test.bat
+</Command>
+    </CustomBuildStep>
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>false</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\LOGICIEL\DINO\ZipArchive library\ZipArchive;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG; _ZIP_IMPL_MFC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <BrowseInformation />
+      <BrowseInformationFile />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ShowIncludes>false</ShowIncludes>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x040c</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <Link>
+      <AdditionalDependencies>ZipArchive.lib;gdiplus.lib;Setupapi.lib;Kernel32.lib;Winmm.lib;Vfw32.lib;Mpr.lib;inpout32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>Concert.exe</OutputFile>
+      <AdditionalLibraryDirectories>D:\GIT\LOGICIEL_VS2015\DINO\ZipArchive library\ZipArchive\Release MFC MT;D:\LOGICIEL\DINO\ZipArchive library\ZipArchive\Release MFC MT;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ManifestFile>$(IntDir)$(TargetFileName).intermediate.manifest</ManifestFile>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <ProfileGuidedDatabase />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <OutputFile>IntDir/$(ProjectName).bsc</OutputFile>
+    </Bscmake>
+    <PostBuildEvent>
+      <Command>echo Copie sur Install
+copy "$(ProjectDir)$(TargetFileName)"  "D:\GIT\LOGICIEL_VS2015\DINO\Install Concerto\Install\Bin\Concert.dat"
+echo Modification du programme
+copy "$(ProjectDir)\$(TargetFileName)"  "C:\Program Files (x86)\Concerto"
+copy "*.lng" "C:\Program Files (x86)\Concerto"
+copy "French.lng"  "C:\Program Files (x86)\Concerto"
+xcopy "$(ProjectDir)Skin" "C:\Program Files (x86)\Concerto\Skin\" /e/y
+
+echo Modification Update dans le repertoire suivant :
+cd 
+rem ATTENTION dans l'explorer sur c:\ le dossier "Programmes" est un alias vers "Program Files". il faut utiliser le vrai chemin dans msdos 
+rem sans mot de passe "C:\Program Files\WinRAR\winrar.exe"  a "Concertupdate_5000.exe" "Concert.exe" "German.lng" "French.lng" "Italian.lng" "Dutch.lng" "Spanish.lng" "Portuguese.lng" "English.lng"
+"C:\Program Files\WinRAR\winrar.exe"  a -ma5 -htb -hp65748392 "Concertupdate_5000.exe" "Concert.exe" "German.lng" "French.lng" "Italian.lng" "Dutch.lng" "Spanish.lng" "Portuguese.lng" "English.lng" "Skin\NF525.jpg
+copy "Concertupdate_5000.exe"  "$(ProjectDir)Concertupdate_5000.arb"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="846231.mev">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <CustomBuild Include="931961.mev">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <CustomBuild Include="Dutch.lng">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <CustomBuild Include="English.lng">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <CustomBuild Include="French.lng">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <CustomBuild Include="German.lng">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <CustomBuild Include="Grandfichier.mev">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <CustomBuild Include="Italian.lng">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <CustomBuild Include="Portuguese.lng">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <CustomBuild Include="res\Concert.rc2">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+    <CustomBuild Include="Spanish.lng">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Atrium.cpp" />
+    <ClCompile Include="BlueGest.cpp" />
+    <ClCompile Include="Butcol.cpp" />
+    <ClCompile Include="Combo.cpp" />
+    <ClCompile Include="CommandeArticle.cpp" />
+    <ClCompile Include="CommandeConcert.cpp" />
+    <ClCompile Include="CommandeConfig.cpp" />
+    <ClCompile Include="CommandeControle.cpp" />
+    <ClCompile Include="CommandeResultat.cpp" />
+    <ClCompile Include="Concerto.cpp" />
+    <ClCompile Include="ConcertoDlg.cpp" />
+    <ClCompile Include="ControlColor.cpp" />
+    <ClCompile Include="Crypt.cpp" />
+    <ClCompile Include="Crypto.cpp" />
+    <ClCompile Include="Digitick.cpp" />
+    <ClCompile Include="DrawWindow.cpp" />
+    <ClCompile Include="EAN128A.cpp" />
+    <ClCompile Include="EAN13 COMBI.cpp" />
+    <ClCompile Include="Export.cpp" />
+    <ClCompile Include="Gal.cpp" />
+    <ClCompile Include="Ident.cpp" />
+    <ClCompile Include="ImportArticle.cpp" />
+    <ClCompile Include="ImportTicket.cpp" />
+    <ClCompile Include="InfoCert.cpp" />
+    <ClCompile Include="Initialisation.cpp" />
+    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="Message.cpp" />
+    <ClCompile Include="Num.cpp" />
+    <ClCompile Include="PrintCaisse.cpp" />
+    <ClCompile Include="PrintConso.cpp" />
+    <ClCompile Include="PrintEntree.cpp" />
+    <ClCompile Include="PrintMessage.cpp" />
+    <ClCompile Include="PrintNews.cpp" />
+    <ClCompile Include="PrintPrevente.cpp" />
+    <ClCompile Include="SimPrint.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Thread Ethernet.cpp" />
+    <ClCompile Include="Thread RS232.cpp" />
+    <ClCompile Include="WritePrinter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="Concert.exe.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\Appli.ico" />
+    <Image Include="res\BA-1.bmp" />
+    <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\bitmap5.bmp" />
+    <Image Include="res\bitmap6.bmp" />
+    <Image Include="res\bitmap7.bmp" />
+    <Image Include="res\bitmap8.bmp" />
+    <Image Include="res\bmp00001.bmp" />
+    <Image Include="res\bmp00002.bmp" />
+    <Image Include="res\bmp00003.bmp" />
+    <Image Include="res\bmp00004.bmp" />
+    <Image Include="res\bmp00005.bmp" />
+    <Image Include="res\bmp00006.bmp" />
+    <Image Include="res\bmp00007.bmp" />
+    <Image Include="res\bmp00008.bmp" />
+    <Image Include="res\bmp00009.bmp" />
+    <Image Include="res\bmp00010.bmp" />
+    <Image Include="res\Check.ico" />
+    <Image Include="res\Concerto.ico" />
+    <Image Include="res\gate.bmp" />
+    <Image Include="res\icon1.ico" />
+    <Image Include="res\icon2.ico" />
+    <Image Include="res\imgClose.bmp" />
+    <Image Include="res\imgCodeBarre.bmp" />
+    <Image Include="res\imgFlDroite.bmp" />
+    <Image Include="res\imgFlGauche.bmp" />
+    <Image Include="res\nchek.ico" />
+    <Image Include="res\QRview.bmp" />
+    <Image Include="res\Radio.bmp" />
+    <Image Include="res\radio1.bmp" />
+    <Image Include="res\RadioC.bmp" />
+    <Image Include="res\RadioR.bmp" />
+    <Image Include="res\Radiored.bmp" />
+    <Image Include="res\RadioV.bmp" />
+    <Image Include="res\radiov1.bmp" />
+    <Image Include="res\Radiovert.bmp" />
+    <Image Include="res\sauto.bmp" />
+    <Image Include="res\scanblue.bmp" />
+    <Image Include="res\scanUSB.bmp" />
+    <Image Include="res\serveur.bmp" />
+    <Image Include="res\web.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="c:\users\barmatic\appdata\local\temp\rar$drb0.539\Key.h" />
+    <ClInclude Include="Combo.h" />
+    <ClInclude Include="Concerto.h" />
+    <ClInclude Include="ConcertoDlg.h" />
+    <ClInclude Include="Gal.h" />
+    <ClInclude Include="GdiplusBase.h" />
+    <ClInclude Include="Ident.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="Message.h" />
+    <ClInclude Include="Num.h" />
+    <ClInclude Include="PrintMessage.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="SimPrint.h" />
+    <ClInclude Include="Singleton.h" />
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Concerto.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties PolicyFile="DAP.vspolicy" RESOURCE_FILE="Concerto.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

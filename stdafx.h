@@ -49,7 +49,7 @@
 #include "Winbase.h"
 #include <Mmsystem.h>
 #include <math.h>
-#include <atlcrypt.h>        // Classes MFC Automation
+//#include <atlcrypt.h>        // Classes MFC Automation
 #include <WinCrypt.h>
 #include <afxdisp.h>        // Classes MFC Automation
 //*** Debug Mode

@@ -273,6 +273,7 @@ public:
 	int ArchivePeriode();
 	int ArchiveExercice();
 						// END *****************  ENUMERATION FONCTION CODE AUDIT ***************
+
 	void VerifyFileIntegrity();				// Vérifie l'intégrité des fichiers de données au démarrage de l'application
 	FILEINFO GetFileInfo(CString path);		// récupére les infos de fichier time et size avec un path
 	FILEINFO GetTimeSizeInfo(HANDLE hf);	// récupére les infos de fichier time et size avec un handle de fichier
@@ -283,6 +284,11 @@ public:
 	CString GetDocSignature(CString,int);// Récupère la signature document avec signature précédente et catégorie signature
 	CString GetFileSignature(CString,int);// Récupère la signature fichier avec signature précédente et catégorie signature
 	void DeleteCrypto();	// ferme la crypto pour la signature électronique
+
+	//************** COMMUNICATIONS AVEC LOOTY ***********************************************
+	BOOL CConcertoDlg::ImportArticlesFromLooty();
+	BOOL CConcertoDlg::UpdateArticlesFromLooty();
+
 	
 	//********************************************************************
 	// Variables  globales
@@ -697,8 +703,8 @@ public:
 	CString	libel2[100];
 	CString	libelcons[100];
 	CString	libelspect[100];
-	CString	cdate[100];
-	CString	cheure[100];
+	CString	cdate[100];// date du controle 
+	CString	cheure[100];// heure du controle
 	CString scantemp;
 	CString tempscan;
 	CString scan;// pour affichage ligne sous le nom de la société (ecran de vente)

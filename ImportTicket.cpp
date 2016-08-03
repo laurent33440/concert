@@ -241,9 +241,17 @@ void CConcertoDlg::ImportFichierExterne(CString source)
 	InterlockedExchange(&FREFCONTROL,1);//Flag demandant de rafraichir la liste de controle avec timer 13
 	SetTimer(13,1000,NULL);
 }
+
+/**
+* Declaration de la borne sur LOOTY de manière récurrente : basé sur le timer IDEvent==17. 
+* Si pas de connection recherche toute les 10s sinon redéclaration toutes les minutes. voir CConcertoDlg::OnTimer
+* Premier temps : déclaration de la borne
+*	Format URL : http://<serveur>/terminal/api/stb/<identificateur borne> 
+* Deuxième temps : activation de la borne périodiquement si flag FWEB est actif
+*	Format URL : http://<serveur>/terminal/api/saa/<identificateur borne> 
+*/
 void CConcertoDlg::SearchWEBShop()
 {
-	CFileFind ff;
 	CString temp;
 	CString path;
 	CTime tim=CTime::GetCurrentTime();
@@ -255,43 +263,103 @@ void CConcertoDlg::SearchWEBShop()
 	CString buf;
 	HANDLE hf;
 	DWORD len;
-	CString servername="http://"+serveur+"/sales"; // Chemin de base du serveur de fichiers de vente de la boutique
-	CString remotefile=servername+"/controle.php?idborne="+serial+"&act=gmt"; // Chemin relatif de l'URL du fichier controle à télécharger
+	
 	try
 	{
-		ps=session.OpenURL(remotefile);
-		if(ps!=NULL)
-		{
-			UINT nRead;	
-			hbuf=buf="";
-			while(TRUE)
+		if(FWEB==0){
+			CString servername="http://"+serveur+"/terminal/api/stb/" ; 
+			CString remotefile=servername+serial; // serial sert à identifier la borne
+			if(fdev==1)//log on dev
 			{
-				nRead=ps->Read(hbuf.GetBuffer(1024),1024);
-				if(nRead==0)
-					break;
-				hbuf.ReleaseBuffer(nRead);
-				buf+=hbuf;
-				hbuf="";				
+				Logger* log = Logger::getInstance(this);
+				log->Log("Déclaration de looty : url vers looty : "+remotefile);
 			}
-			ps->Close();
-			delete ps;
-			if( buf==serial&&FWEB==0)
+
+			ps=session.OpenURL(remotefile);
+			if(ps!=NULL)
 			{
-				path=controldir+"\\Web.log";
-				temp=tim.Format("%d/%m/%Y %H:%M:%S")+" url="+remotefile+" Connexion OK "+"\r\n";
-				hf=(CreateFile(path,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL));
-				if(hf!=INVALID_HANDLE_VALUE)
+				UINT nRead;	
+				hbuf=buf="";
+				while(TRUE)
 				{
-					SetFilePointer(hf,NULL,NULL,FILE_END);
-					WriteFile(hf,temp.GetBuffer(temp.GetLength()),temp.GetLength(),&len,NULL);
-					CloseHandle(hf);			
+					nRead=ps->Read(hbuf.GetBuffer(1024),1024);
+					if(nRead==0)
+						break;
+					hbuf.ReleaseBuffer(nRead);
+					buf+=hbuf;
+					hbuf="";				
+				}
+				buf.Trim(" ");
+				if(fdev==1)//log on dev
+				{
+					Logger* log = Logger::getInstance(this);
+					log->Log("Déclaration de looty : retour de looty : "+buf);
+				}
+				ps->Close();
+				delete ps;
+				buf.Trim(" ");
+				if(buf=="ok" &&FWEB==0)
+				{
+					if(fdev==1)//log on dev
+					{
+						Logger* log = Logger::getInstance(this);
+						log->Log("Borne déclarée sur looty ");
+					}
+				}
+				if( buf=="ok")
+					InterlockedExchange(&FWEB,1);
+				else
+				{
+					InterlockedExchange(&FWEB,0);
 				}
 			}
-			if( buf==serial)
-				InterlockedExchange(&FWEB,1);
-			else
+		}else{
+			CString servername="http://"+serveur+"/terminal/api/saa/" ; 
+			CString remotefile=servername+serial; // serial sert à identifier la borne
+			ps=session.OpenURL(remotefile);
+
+			if(fdev==1)//log on dev
 			{
-				InterlockedExchange(&FWEB,0);
+				Logger* log = Logger::getInstance(this);
+				log->Log("Activation de la borne : url vers looty : "+remotefile);
+			}
+
+			if(ps!=NULL)
+			{
+				UINT nRead;	
+				hbuf=buf="";
+				while(TRUE)
+				{
+					nRead=ps->Read(hbuf.GetBuffer(1024),1024);
+					if(nRead==0)
+						break;
+					hbuf.ReleaseBuffer(nRead);
+					buf+=hbuf;
+					hbuf="";				
+				}
+				buf.Trim(" ");
+				if(fdev==1)//log on dev
+				{
+					Logger* log = Logger::getInstance(this);
+					log->Log("Activation de la borne : retour de looty : "+buf);
+				}
+				ps->Close();
+				delete ps;
+				
+				if(buf=="ok"&&FWEB==1)
+				{
+					if(fdev==1)//log on dev
+					{
+						Logger* log = Logger::getInstance(this);
+						log->Log("Conection à Looty active ");
+					}
+				}
+				if( buf=="ok")
+					InterlockedExchange(&FWEB,1);
+				else
+				{
+					InterlockedExchange(&FWEB,0);
+				}
 			}
 		}
 	}
@@ -299,20 +367,393 @@ void CConcertoDlg::SearchWEBShop()
 	{
 		pEx->GetErrorMessage(temp.GetBuffer(10000),10000,0);
 		temp.ReleaseBuffer(-1);
-		path=controldir+"\\Web.log";
-		temp=tim.Format("%d/%m/%Y %H:%M:%S")+" url="+remotefile+" Erreur = "+temp+"\r\n";
-
-		hf=(CreateFile(path,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL));
-		if(hf!=INVALID_HANDLE_VALUE)
+		if(fdev==1)//log on dev
 		{
-			SetFilePointer(hf,NULL,NULL,FILE_END);
-			WriteFile(hf,temp.GetBuffer(temp.GetLength()),temp.GetLength(),&len,NULL);
-			CloseHandle(hf);			
+			Logger* log = Logger::getInstance(this);
+			log->Log("Erreur de connection sur looty  : "+temp);
 		}
+
 		InterlockedExchange(&FWEB,0);
 	}
 	session.Close();
 }
+
+/**
+* Importation des articles de LOOTY de manière périodique. Voir TIMER n°18 voir CConcertoDlg::OnTimer
+* Structure URL :  http://<serveur>/terminal/api/cma/<identificateur borne> 
+* Article à partir du n°81 jusqu'à 99
+* Return true si importation ok, false sinon
+*/
+BOOL CConcertoDlg::ImportArticlesFromLooty()
+{
+	CString temp;
+	CString path;
+	CTime tim=CTime::GetCurrentTime();
+	CString stamp=tim.Format("%Y%m%d%H%M%S");	
+	CInternetSession session("stamp");
+	session.SetOption(INTERNET_OPTION_RESET_URLCACHE_SESSION,0);
+	CStdioFile* ps;
+	CString hbuf;
+	CString artbuf;
+	HANDLE hf;
+	DWORD len;
+	int ida, idx=0, idy,idz;
+	CString horaire="";
+	//
+	CString artlibelle1;
+	CString artlibelle2;
+	CString artlibelcons;
+	double artprix;
+	double arttva1;
+	double artval1;
+	double arttva2;
+	double artval2;
+	int artperso;
+	int artconso;
+	int artmode;
+
+	try
+	{
+		CString servername="http://"+serveur+"/terminal/api/cma/" ; 
+		CString remotefile=servername+serial; // serial sert à identifier la borne
+		if(fdev==1)//log on dev
+		{
+			Logger* log = Logger::getInstance(this);
+			log->Log("Importation articles de Looty : url vers looty : "+remotefile);
+		}
+		ps=session.OpenURL(remotefile);
+		if(ps!=NULL)
+		{
+			UINT nRead;	
+			hbuf=artbuf="";
+			while(TRUE)
+			{
+				nRead=ps->Read(hbuf.GetBuffer(1024),1024);
+				if(nRead==0)
+					break;
+				hbuf.ReleaseBuffer(nRead);
+				artbuf+=hbuf;
+				hbuf="";				
+			}
+			artbuf.Trim(" ");
+			artbuf.Replace("|","\r\n");
+			if(fdev==1)//log on dev
+			{
+				Logger* log = Logger::getInstance(this);
+				log->Log("articles définis de Looty :  "+artbuf);
+			}
+			if(artbuf.Find("*ARTICLE*\r\n",idx)==0)// Reconnaissance d'un fichier article par la balise
+			{
+				idx=11;//debut 2eme ligne
+				if(artbuf.Find("Horaire=",idx)!=-1)
+				{
+					idx+=8;//point sur contenu de horaire
+					idy=artbuf.Find("\r\n",idx);
+					horaire=artbuf.Mid(idx,idy-idx);
+					if(fdev==1)//log on dev
+					{
+						Logger* log = Logger::getInstance(this);
+						log->Log("Horaire de l'articles définis de Looty :  "+horaire);
+					}
+					idx=idy+2;
+				}else //FIXME HACK format non conforme de ROMAIN
+					idx+=15;//debut 3éme ligne
+				/*else
+					goto ARTERROR;*/
+				while((idz=artbuf.Find("\r\n",idx))!=-1)// Passe en revue les lignes d'article
+				{
+					if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format(" index idz, idx :  %u %u",idz, idx);
+							log->Log(mess);
+						}
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// N° de l'article
+					{
+						temp=artbuf.Mid(idx,idy-idx);
+						ida=atoi(temp);// index de l'article
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("Index article:  "+temp+" index idx : %u",idx);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// libelle1
+					{
+						artlibelle1=artbuf.Mid(idx,idy-idx);
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("libelle1 article:  "+artlibelle1+" index idx : %u",idx);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// libelle2
+					{
+						artlibelle2=artbuf.Mid(idx,idy-idx);
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("libelle2 article:  "+artlibelle2+" index idx : %u",idx);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// libelle3
+					{
+						artlibelcons=artbuf.Mid(idx,idy-idx);
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("libelle3 article:  "+artlibelcons+" index idx : %u",idx);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// PRIX TTC
+					{
+						artprix=atof(artbuf.Mid(idx,idy-idx));
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("prix article:  %.2f",artprix);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)//  TVA1
+					{
+						arttva1=atof(artbuf.Mid(idx,idy-idx));
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("tva1 article:  %.2f",arttva1);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// Val TVA1
+					{
+						artval1=atof(artbuf.Mid(idx,idy-idx));
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("val tva1 article:  %.2f",artval1);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// TVA2
+					{
+						arttva2=atof(artbuf.Mid(idx,idy-idx));
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("tva2 article:  %.2f",arttva2);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// val TVA2
+					{
+						artval2=atof(artbuf.Mid(idx,idy-idx));
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("val tva2 article:  %.2f",artval2);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// Parametre article
+					{
+						artperso=atoi(artbuf.Mid(idx,idy-idx));
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("perso article:  %u",artperso);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// Qté
+					{
+						artconso=atoi(artbuf.Mid(idx,idy-idx));
+						idx=idy+1;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("Qté article:  %u",artconso);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					//if((idy=artbuf.Find(";",idx))!=-1&&idy<=idz)// Qté
+					//{
+					//	artlibelcons=artbuf.Mid(idx,idy-idx);
+					//	idx=idy+2;
+					//}
+					//else
+					//	goto ARTERROR;
+					if((idy=artbuf.Find("\r\n",idx))!=-1&&idy<=idz)// type d'entree
+					{
+						artmode=atoi(artbuf.Mid(idx,idy-idx));
+						idx=idy+2;
+						if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("type entree article:  %u",artmode);
+							log->Log(mess);
+						}
+					}
+					else
+						goto ARTERROR;
+					libel1[ida]=artlibelle1;
+					libel2[ida]=artlibelle2;
+					libelcons[ida]=artlibelcons;
+					prix[ida]=artprix;
+					tva1[ida]=arttva1;
+					val1[ida]=artval1;
+					tva2[ida]=arttva2;
+					val2[ida]=artval2;
+					perso[ida]=artperso;
+					conso[ida]=artconso;
+					entrymode[ida]=artmode;
+					libelspect[ida]="";
+
+					//m a j modif article
+					//lna.SetItemData(lna.AddString("article"),ida);//liste des articles modifiés
+					// base registre
+					CWinApp* pa=AfxGetApp();
+					CString art;
+					art.Format("%u",ida);
+					if(fdev==1)//log on dev
+						{
+							Logger* log = Logger::getInstance(this);
+							CString mess;
+							mess.Format("index article base registre: "+art);
+							log->Log(mess);
+						}
+					pa->WriteProfileString(art,"LIBELLE1",libel1[ida]);
+					pa->WriteProfileString(art,"LIBELLE2",libel2[ida]);
+					pa->WriteProfileString(art,"LIBELCONS",libelcons[ida]);
+					pa->WriteProfileString(art,"LIBELSPECT",libelspect[ida]);
+					pa->WriteProfileInt(art,"PRIX",(int)(prix[ida]*100));
+					pa->WriteProfileInt(art,"TVA",(int)(tva1[ida]*100));
+					pa->WriteProfileInt(art,"PERSO",perso[ida]);
+					pa->WriteProfileInt(art,"CONSO",conso[ida]);
+					pa->WriteProfileInt(art,"VCONSO",entrymode[ida]);
+					pa->WriteProfileInt(art,"VALCONSO",entrymode[ida]);
+					pa->WriteProfileInt(art,"TVA2",(int)(tva2[ida]*100));
+					pa->WriteProfileInt(art,"VAL1",(int)(val1[ida]*100));
+					pa->WriteProfileInt(art,"VAL2",(int)(val2[ida]*100));
+					//M a j articles pour esclave si maitre
+					FART=1;
+					RefreshArticle();
+					//Refresh screen
+					DrawBoutonArticle(17);
+					//int j=(int)lna.GetItemData(ida);// N° article ayant été modifié
+					//int k=ida-(artrange*NAPP);
+					//if(fdev==1)//log on dev
+					//	{
+					//		Logger* log = Logger::getInstance(this);
+					//		CString mess;
+					//		mess.Format("index article modifié: %u index article sur la page : %u",ida,k);
+					//		log->Log(mess);
+					//	}
+					//if(k>0&&k<=NAPP)
+					//{
+					//	DrawBoutonArticle(k-1);
+					//	if(wsel==3)
+					//	{
+					//		FillStat(ida);// recharge les statics du bouton sélectionné 
+					//	}
+					//}
+				}
+			}
+			else
+			{
+ARTERROR:;			
+				if(fdev==1)//log on dev
+				{
+					Logger* log = Logger::getInstance(this);
+					CString mess;
+					mess.Format("Erreur de format dans la description des articles provenant de LOOTY. Index : %u",idy);
+					log->Log(mess);
+				}
+				
+				session.Close();
+				return false;
+			}
+		}
+	}
+			
+	catch (CInternetException* pEx) // traitement des erreurs d'accès internet
+	{
+		pEx->GetErrorMessage(temp.GetBuffer(10000),10000,0);
+		temp.ReleaseBuffer(-1);
+		if(fdev==1)//log on dev
+		{
+			Logger* log = Logger::getInstance(this);
+			log->Log("Erreur de connection sur looty  : "+temp);
+		}
+
+		InterlockedExchange(&FWEB,0);
+		return false;
+	}
+	session.Close();
+	return true;
+}
+
+/**
+* M à j des articles de LOOTY de manière périodique. Voir TIMER n°19 voir CConcertoDlg::OnTimer
+* Structure URL :  http://<serveur>/terminal/api/cma/<identificateur borne> 
+* Article à partir du n°81 jusqu'à 99
+* Return true si importation ok, false sinon
+*/
+BOOL CConcertoDlg::UpdateArticlesFromLooty()
+{
+	return true;
+}
+
+
 
 int CConcertoDlg::SearchWEBFile()
 {

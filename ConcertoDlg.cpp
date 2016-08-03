@@ -2503,16 +2503,20 @@ retry_OpenPrinter1:;
 			break;
 		}	
 	}
-	InterlockedExchange(&FREFCONTROL,1);//Flag demandant de rafraichir la liste de controle avec timer 13
-	SetTimer(13,1000,NULL);
-
-	if(i>16)
-		SetTimer(17,30000,NULL);// Lance la recherche des fichiers WEB toutes les 30 secondes car pas de fichiers en controle
-	SetTimer(11,30000,NULL);
-	SetTimer(18,5000,NULL);// Lance le test de connexion WEB
-	SetTimer(12,1000,NULL);//Timer de clignotement du logo réseau en présence de nouveau article et caisse non-cloturée
 	SetTimer(2,1000,NULL);
 	SetTimer(3,2000,NULL);
+	SetTimer(11,30000,NULL);
+	SetTimer(12,1000,NULL);//Timer de clignotement du logo réseau en présence de nouveau article et caisse non-cloturée
+	InterlockedExchange(&FREFCONTROL,1);//Flag demandant de rafraichir la liste de controle avec timer 13
+	SetTimer(13,1000,NULL);
+	
+	//COMMUNICATIONS AVEC LOOTY
+	SetTimer(17,5000,NULL);// Lance le test de connexion vers LOOTY
+	SetTimer(18,30000,NULL);// timer importation articles de LOOTY
+	SetTimer(19,35000,NULL);// m a j articles de LOOTY
+	if(i>16)// aucun controle en cours
+		SetTimer(20,40000,NULL);// importation prévenete de LOOTY et fichier articles associés
+	
 	if(!master)
 		lnbap.EnableWindow(0);
 	if(!master)
@@ -4627,20 +4631,42 @@ void CConcertoDlg::OnTimer(UINT_PTR nIDEvent)
 		}
 		SetTimer(16,15000,NULL); 
 	}
-	if(nIDEvent==17&&master&&serveur!="")// Lance la recherchedes des fichiers WEB toutes les 15 secondes
+	
+	if(nIDEvent==17&&serveur!="")
 	{	
 		KillTimer(17);
-		SearchWEBFile();// Cherche un fichier de controle sur le serveur WEB si aucun chargé
-	}
-	if(nIDEvent==18&&serveur!="")
-	{	
-		KillTimer(18);
 		SearchWEBShop();// Vérifie une connection boutique WEB
 		if(FWEB==1)
-			SetTimer(18,300000,NULL);// Retestera la connection dans 5 minutes
+			SetTimer(17,20000,NULL);// Retestera la connection dans 5 minutes
 		else
-			SetTimer(18,10000,NULL);// Retestera la connection dans 10 secondes
+			SetTimer(17,10000,NULL);// Retestera la connection dans 10 secondes
 	}
+	if(nIDEvent==18&&master&&serveur!="")// Importation articles de LOOTY si connecté
+	{	
+		if(FWEB==1){
+			KillTimer(18);
+			ImportArticlesFromLooty();// 
+			SetTimer(18,30000,NULL);
+		}
+	}
+	if(nIDEvent==19&&master&&serveur!="")// maj articles de LOOTY si connecté
+	{	
+		if(FWEB==1){
+			KillTimer(19);
+			UpdateArticlesFromLooty();
+			SetTimer(19,35000,NULL);
+		}
+	}
+	if(nIDEvent==20&&master&&serveur!="")// Importation préventes de LOOTY si connecté
+	{	
+		if(FWEB==1){
+			KillTimer(20);
+			SearchWEBFile();// Cherche fichier de prévente fourni par LOOTY
+			SetTimer(19,40000,NULL);
+		}
+	}
+
+
 	CDialog::OnTimer(nIDEvent);
 }
 
@@ -6170,7 +6196,7 @@ void CConcertoDlg::SaveStaticArticle()
 		vpass.ShowWindow(0);
 		valpass=0;
 	}
-	perso[idx]=valentry+(valplace*2)+(valmix*4)+(valactif*8)+(valexo*0x10)+(valpass*0x1000)+(cbx*0x10000);//+(xxx*0x10000000)
+	perso[idx]=valentry+(valplace*2)+(valmix*4)+(valactif*8)+(valexo*0x10)+(valpass*0x1000)+(cbx*0x10000);// FUTURE USES : +(xxx*0x10000000)
 	AfxGetApp()->WriteProfileInt(nart,"PERSO",perso[idx]);
 	spect.GetWindowText(libelspect[idx]);
 	guichet.GetWindowText(temp);

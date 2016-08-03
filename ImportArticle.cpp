@@ -114,16 +114,17 @@ retry:;
 		idx=j+1;
 		if((j=article.Find(";",idx))==-1)
 			break;
-		if(serveur!=""&&i>81)
+		/*if(serveur!=""&&i>81)
 		{
-			impperso=atoi(article.Mid(idx,j-idx));
+			impperso=(DWORD)atoi(article.Mid(idx,j-idx));
 		}
 		else
-		{
+		{*/
 			//impperso=(DWORD)atoi(article.Mid(idx,j-idx))&0xFFFFFFF7;//valactif ignoré...
-			impperso=(DWORD)atoi(article.Mid(idx,j-idx));
+		//}
 
-		}
+		//LE MAITRE EST LA REFERENCE POUR L'ACTIVATION OU LA DESACTIVATION DES ARTICLES DES ESCLAVES ASSOCIES 
+		impperso=(DWORD)atoi(article.Mid(idx,j-idx));
 
 		idx=j+1;
 		if((j=article.Find(";",idx))==-1)
