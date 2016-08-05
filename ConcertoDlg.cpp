@@ -5437,6 +5437,7 @@ FIN:;
 		{
 			scan=tempscan+"\n"+scantemp;
 			SCANMODE=DT_CENTER|DT_SINGLELINE|DT_VCENTER;
+			
 		}
 		else
 		{
@@ -5449,6 +5450,27 @@ FIN:;
 		nscan.SetWindowTextA(scan);
 		nscan.ShowWindow(1);
 		SetTimer(10, 10000, NULL);// affichage pendant 10 secondes
+		//Tourniquet
+		if(controlcolor==0x00FF00)//vert
+		{
+			CString temp2;
+			OpenTourniquet(); // *****  a gerer avec annulation ticket ***
+			ngopen++;
+			tgate.GetWindowText(temp);
+			if(fdev&&temp!="ABSENT")
+			{
+				temp1.Format("OPEN = %u",ngopen);
+				temp2.Format("    PASS %u",ngpass);
+				scan=temp1+temp2;
+				nscan.SetWindowPos(&wndTopMost,rctscan.left,rctscan.top,rctscan.Width(),rctscan.Height(),SWP_SHOWWINDOW   );
+				SCANMODE=DT_CENTER|DT_END_ELLIPSIS|DT_NOPREFIX;
+				SCANCOLOR=0;
+				nscan.ShowWindow(0);
+				nscan.SetWindowTextA(temp1);
+				nscan.ShowWindow(1);/**/
+			}
+		}
+			//
 	}
 	else
 		nscan.ShowWindow(0);

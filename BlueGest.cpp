@@ -3,6 +3,7 @@
 #include "ConcertoDlg.h"
 #include "Num.h"
 #pragma comment (lib, "setupapi.lib")
+
 void CConcertoDlg::OnSearchScanBLUE()
 {
 	CString statustxt;
@@ -26,21 +27,32 @@ void CConcertoDlg::OnSearchScanBLUE()
 	//Class=Ports
 	//ClassGUID={4d36e978-e325-11ce-bfc1-08002be10318}
 	did.cbSize=sizeof(SP_DEVINFO_DATA);
-	hdi=SetupDiGetClassDevs(&guid,"FTDIBUS",NULL,DIGCF_PRESENT);
+	hdi=SetupDiGetClassDevs(&guid,"FTDIBUS",NULL,DIGCF_PRESENT); //ORIGIN
 	DeviceNumber=0;
 	statustxt="";
 	scaninter="";
 	do
 	{
+		if(fdev==1)//log on dev
+		{
+			Logger* log = Logger::getInstance(this);
+			log->Log("OnSearchScanBLUE");
+		}
+
 		tmp="";
 		SetupStatus=SetupDiEnumDeviceInfo(hdi,DeviceNumber,&did);
 		if(SetupStatus)
 		{
 			
-			SetupDiGetDeviceInstanceId(hdi,&did,tmp.GetBuffer(100),100,&rsize);
+			SetupDiGetDeviceInstanceId(hdi,&did,tmp.GetBuffer(100),100,&rsize);//origin
 			tmp.ReleaseBuffer(-1);
 			if(tmp!="")
 			{
+				if(fdev==1)//log on dev
+				{
+					Logger* log = Logger::getInstance(this);
+					log->Log("OnSearchScanBLUE : temp : "+tmp);
+				}
 				CString regkey="SYSTEM\\CurrentControlSet\\Enum\\"+tmp+"\\Device Parameters";
 				if(RegOpenKey(HKEY_LOCAL_MACHINE,regkey,&hKey)==ERROR_SUCCESS)
 				{
@@ -59,6 +71,12 @@ void CConcertoDlg::OnSearchScanBLUE()
 				}
 				RegCloseKey(hKey);
 				val.ReleaseBuffer(-1);
+				if(fdev==1)//log on dev
+				{
+					Logger* log = Logger::getInstance(this);
+					log->Log("OnSearchScanBLUE : val com : "+val + "  ** COMWL : "+COMWL);
+				}
+
 				if((val!=""))
 				{
 					Sleep(100);
@@ -66,7 +84,7 @@ void CConcertoDlg::OnSearchScanBLUE()
 					{
 						if(COMWL!="")
 						{
-							//MessageBox("Erreur clé "+temp);
+							MessageBox("Erreur clé "+temp);
 							InterlockedExchange(&ABORT,1);
 							Sleep(100);
 							temp="---\r\n";
@@ -125,6 +143,130 @@ void CConcertoDlg::OnSearchScanBLUE()
 	while(SetupStatus);
 	SetupDiDestroyDeviceInfoList(hdi);
 }
+
+//void CConcertoDlg::OnSearchScanBLUE()
+//{
+//	CString statustxt;
+//	CString tmp;
+//	CString temp;
+//	HKEY hKey;
+//	DWORD	type;
+//	DWORD	sizname;
+//	DWORD	sizval;
+//	CString port;
+//	CString val;
+//	LONG status;
+//	int i;
+//	int DeviceNumber;
+//	BOOL SetupStatus;
+//	DWORD rsize;
+//	CString target;
+//	SP_DEVINFO_DATA  did;
+//	HDEVINFO hdi;
+//	GUID guid = { 0x4d36e978, 0xe325, 0x11ce, { 0xbf, 0xc1, 0x08, 0x00, 0x2b, 0xe1, 0x03, 0x18 } };
+//	//Class=Ports
+//	//ClassGUID={4d36e978-e325-11ce-bfc1-08002be10318}
+//	did.cbSize=sizeof(SP_DEVINFO_DATA);
+//	//hdi=SetupDiGetClassDevs(&guid,"FTDIBUS",NULL,DIGCF_PRESENT); //ORIGIN
+//	hdi=SetupDiGetClassDevs(&guid,"BTHENUM",NULL,DIGCF_PRESENT);
+//	DeviceNumber=0;
+//	statustxt="";
+//	scaninter="";
+//	do
+//	{
+//		if(fdev==1)//log on dev
+//		{
+//			Logger* log = Logger::getInstance(this);
+//			log->Log("OnSearchScanBLUE");
+//		}
+//
+//		tmp="";
+//		SetupStatus=SetupDiEnumDeviceInfo(hdi,DeviceNumber,&did);
+//		if(SetupStatus)
+//		{
+//			
+//			//SetupDiGetDeviceInstanceId(hdi,&did,tmp.GetBuffer(100),100,&rsize);//origin
+//			SetupDiGetDeviceInstanceId(hdi,&did,tmp.GetBuffer(1000),1000,&rsize);
+//			tmp.ReleaseBuffer(-1);
+//			if(tmp!="")
+//			{
+//				if(fdev==1)//log on dev
+//				{
+//					Logger* log = Logger::getInstance(this);
+//					log->Log("OnSearchScanBLUE : temp : "+tmp);
+//				}
+//				CString regkey="SYSTEM\\CurrentControlSet\\Enum\\"+tmp+"\\Device Parameters";
+//				if(RegOpenKey(HKEY_LOCAL_MACHINE,regkey,&hKey)==ERROR_SUCCESS)
+//				{
+//					i=0;
+//					do
+//					{
+//						port="";
+//						val="";
+//						sizname=1000;
+//						sizval=1000;
+//						status=RegEnumValue(hKey,i,port.GetBuffer(1000),&sizname,NULL,&type,(BYTE*)val.GetBuffer(1000),&sizval);
+//						port.ReleaseBuffer(-1);			
+//						i++;
+//					}
+//					while(status==ERROR_SUCCESS&&port!="PortName");
+//				}
+//				RegCloseKey(hKey);
+//				val.ReleaseBuffer(-1);
+//				if(fdev==1)//log on dev
+//				{
+//					Logger* log = Logger::getInstance(this);
+//					log->Log("OnSearchScanBLUE : val com : "+val + "  ** old COMWL : "+COMWL);
+//				}
+//
+//				if((val!=""))
+//				{
+//					Sleep(100);
+//					if(val.Left(3)=="COM"&&tmp.Find("&000666",0)!=-1)// identificateur unique bluetooth : 00:06:66:69:7d:63
+//					{
+//						
+//						COMWL=val;
+//						if(fdev==1)//log on dev
+//						{
+//							Logger* log = Logger::getInstance(this);
+//							log->Log("OnSearchScanBLUE COMWL : "+COMWL);
+//						}
+//						break;
+//					}
+//				}
+//				else
+//				{
+//					scaninter="";
+//					InterlockedExchange(&BASCULE,0);
+//					InterlockedExchange(&BLUERIGHT,0);
+//					CancelIo(HRS);
+//					PurgeComm(HRS,PURGE_TXCLEAR);
+//					PurgeComm(HRS,PURGE_RXCLEAR);
+//					CloseHandle(HRS);
+//					COMWL="";
+//					HRS=INVALID_HANDLE_VALUE;
+//				}
+//			}
+//			else
+//			{
+//				scaninter="";
+//				InterlockedExchange(&BASCULE,0);
+//				InterlockedExchange(&BLUERIGHT,0);
+//				CancelIo(HRS);
+//				PurgeComm(HRS,PURGE_TXCLEAR);
+//				PurgeComm(HRS,PURGE_RXCLEAR);
+//				CloseHandle(HRS);
+//				COMWL="";
+//				HRS=INVALID_HANDLE_VALUE;
+//			}
+//
+//		}
+//		DeviceNumber++;
+//	}
+//	while(SetupStatus);
+//	SetupDiDestroyDeviceInfoList(hdi);
+//}
+
 void CConcertoDlg::OnSearchScanUSB()
 {
 	CString statustxt;
@@ -259,7 +401,7 @@ void CConcertoDlg::OnSearchGate()
 				if(val!="")//********************************************************************************************************************
 				{//HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\BTHENUM\{00001101-0000-1000-8000-00805f9b34fb}_LOCALMFG&0002
 					Sleep(100);
-					if(val.Left(3)=="COM"&&tmp.Find("&000666",0)!=-1)
+					if(val.Left(3)=="COM"&&tmp.Find("&000666",0)!=-1)// 00:06:66:7f:b7:ce
 					{
 						COMGATE=val;
 						break;
@@ -339,7 +481,7 @@ void CConcertoDlg::SetupComBlue()
 	HRS=CreateFile("\\\\.\\"+COMWL,GENERIC_READ|GENERIC_WRITE,NULL,NULL,OPEN_EXISTING,0,NULL);
 	if(HRS== INVALID_HANDLE_VALUE)//
 	{
-		//MessageBox("Le port n'a pas pu être ouvert");
+		MessageBox("Le port n'a pas pu être ouvert");
 		scaninter="";
 		COMWL="";
 	}
@@ -352,7 +494,8 @@ void CConcertoDlg::SetupComBlue()
 		cto.WriteTotalTimeoutConstant=1;
 		SetCommTimeouts(HRS,&cto);
 		GetCommState(HRS,&param);
-		param.BaudRate=115000;           
+		param.BaudRate=115000;
+		//param.BaudRate=4800; 
 		param.fBinary=1;          // binary mode, no EOF check   
 		param.fParity=1;          // enable parity checking      
 		param. fOutxCtsFlow=0;      // CTS output flow control     
@@ -633,6 +776,11 @@ void CConcertoDlg::GetTargetAdress()
 		if(((i=temp.Find("SPOT",0))!=-1)&&i>13)
 		{//Vérifie le nom du périphérique
 			blueadress=temp.Mid(i-13,12);// adresse du scanner 
+			if(fdev==1)//log on dev
+			{
+				Logger* log = Logger::getInstance(this);
+				log->Log("GetTargetAdress : "+blueadress);
+			}
 			com="SR,"+blueadress+"\r\n";
 			if(!SendRS(com))// inscrit dans la clé l'adresse du périphérique auquel se connecter automatiquement
 				goto ERRCOM;
@@ -659,8 +807,8 @@ ERRCOM:;
 	COMWL="";
 	tcontrol.ShowWindow(0);//********************
 	tcontrol.SetWindowTextA("HRDB");//*****************			
-	//total.SetWindowTextA("Erreur écriture GetTargetAdress = "+com);
-	//MessageBox("Erreur écriture GetTargetAdress = "+com+" buf ="+buf);
+	total.SetWindowTextA("Erreur écriture GetTargetAdress = "+com);
+	MessageBox("Erreur écriture GetTargetAdress = "+com+" buf ="+buf);
 	goto EXIT;
 ERRSTAT:;
 	BlueReset();

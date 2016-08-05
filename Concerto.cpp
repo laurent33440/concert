@@ -87,33 +87,33 @@ BOOL CConcertoApp::InitInstance()
 	GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 	m_pMainWnd = &dlg;
 	
-	while(::FindWindow(NULL,"EXPLOCK")==NULL)
-	{
-		wdg++;
-		if(wdg>15)
-			break;
-		Sleep(500);
-	}
-	
-	if(::FindWindow(NULL,"EXPLOCK")==NULL)// Recherche si le bloqueur d'explorer Windows a été lancé
-	{// Si non tente de le relancer
-		ZeroMemory( &csui, sizeof(csui) );
-		csui.cb = sizeof(csui);
-		ZeroMemory( &cpi, sizeof(cpi) );
-		GetStartupInfo(&csui);
-		temp=dlg.appdir+"\\Explock.exe";
-		CreateProcess(NULL,temp.GetBuffer(),NULL,NULL,FALSE,NORMAL_PRIORITY_CLASS,NULL,NULL,&csui,&cpi);// Le lance
-		CloseHandle(cpi.hProcess);
-		CloseHandle(cpi.hThread);
-		ZeroMemory( &csui, sizeof(csui) );
-		csui.cb = sizeof(csui);
-		ZeroMemory( &cpi, sizeof(cpi) );
-		GetStartupInfo(&csui);
-		temp="cmd.exe /c taskkill /f /im explorer.exe";// sécurité bureau windows
-		CreateProcess(NULL,temp.GetBuffer(),NULL,NULL,FALSE,NORMAL_PRIORITY_CLASS,NULL,NULL,&csui,&cpi);//Ferme l'explorer windows
-		CloseHandle(cpi.hProcess);
-		CloseHandle(cpi.hThread);
-	}
+	//while(::FindWindow(NULL,"EXPLOCK")==NULL)
+	//{
+	//	wdg++;
+	//	if(wdg>15)
+	//		break;
+	//	Sleep(500);
+	//}
+	//
+	//if(::FindWindow(NULL,"EXPLOCK")==NULL)// Recherche si le bloqueur d'explorer Windows a été lancé
+	//{// Si non tente de le relancer
+	//	ZeroMemory( &csui, sizeof(csui) );
+	//	csui.cb = sizeof(csui);
+	//	ZeroMemory( &cpi, sizeof(cpi) );
+	//	GetStartupInfo(&csui);
+	//	temp=dlg.appdir+"\\Explock.exe";
+	//	CreateProcess(NULL,temp.GetBuffer(),NULL,NULL,FALSE,NORMAL_PRIORITY_CLASS,NULL,NULL,&csui,&cpi);// Le lance
+	//	CloseHandle(cpi.hProcess);
+	//	CloseHandle(cpi.hThread);
+	//	ZeroMemory( &csui, sizeof(csui) );
+	//	csui.cb = sizeof(csui);
+	//	ZeroMemory( &cpi, sizeof(cpi) );
+	//	GetStartupInfo(&csui);
+	//	temp="cmd.exe /c taskkill /f /im explorer.exe";// sécurité bureau windows
+	//	CreateProcess(NULL,temp.GetBuffer(),NULL,NULL,FALSE,NORMAL_PRIORITY_CLASS,NULL,NULL,&csui,&cpi);//Ferme l'explorer windows
+	//	CloseHandle(cpi.hProcess);
+	//	CloseHandle(cpi.hThread);
+	//}
 	
 	dlg.RUNRS=0;
 	dlg.STOPRS=0;

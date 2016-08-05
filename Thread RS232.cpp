@@ -27,12 +27,22 @@ DWORD WINAPI RSReadThread(LPVOID lpParameter)// scanner
 	{
 		if(PCF->RUNRS&&PCF->HRS!=INVALID_HANDLE_VALUE)//&&PCF->master)**********************************************************************
 		{
+			if(PCF->fdev==1)//log on dev
+			{
+				Logger* log = Logger::getInstance(PCF);
+				log->Log("ThreadRS232 1 :: scan inter : "+PCF->scaninter);
+			}
 			if(ReadFile(PCF->HRS,filebuf.GetBuffer(512),512,&NBR,NULL)&&NBR>0)
 			{
 				filebuf.ReleaseBuffer(NBR);
 				PCF->bufin=PCF->bufin+filebuf;
 				filebuf="";
 				NBR=0;
+				if(PCF->fdev==1)//log on dev
+				{
+					Logger* log = Logger::getInstance(PCF);
+					log->Log("ThreadRS232 1 :: redfilescan  : "+PCF->bufin);
+				}
 			}
 			if(PCF->afmode==1&&PCF->etb>0&&PCF->bufin.Find("\r",0)!=-1)
 			{// si on est dans une étape de vente de la borne, réception d'un scan de QR de téléphone pour le paiement
@@ -42,17 +52,34 @@ DWORD WINAPI RSReadThread(LPVOID lpParameter)// scanner
 			}
 			else
 			{
+				if(PCF->fdev==1)//log on dev
+				{
+					Logger* log = Logger::getInstance(PCF);
+					CString mess;
+					mess.Format("ThreadRS232 2 :: billetterie  : "+PCF->bufin + " ---CONTROL : %u",PCF->CONTROL);
+					log->Log(mess );
+				}
 				if(PCF->CONTROL&&((PCF->BASCULE&&PCF->scaninter=="BLUE")||PCF->scaninter=="USB")&&(i=PCF->bufin.Find("\r",0))!=-1&&PCF->etb==0)
 				{// si on est en controle on va analyser le code reçu
 					temp=PCF->bufin.Left(i);
-					//PCF->MessageBox(temp);
+					
 					PCF->bufin=PCF->bufin.Mid(i+1);
 					PCF->scantxt=temp;
+					if(PCF->fdev==1)//log on dev
+					{
+						Logger* log = Logger::getInstance(PCF);
+						log->Log("ThreadRS232 : controle analyse du code recu : "+temp);
+					}
 					PCF->ScanCode();
 				}
 			}
 			if(!PCF->CONTROL&&((PCF->BASCULE&&PCF->scaninter=="BLUE")||PCF->scaninter=="USB")&&(i=PCF->bufin.Find("\r",0))!=-1&&PCF->etb==0)
 			{
+				if(PCF->fdev==1)//log on dev
+				{
+					Logger* log = Logger::getInstance(PCF);
+					log->Log("ThreadRS232 3 :: BASCULE à 0  ");
+				}
 				InterlockedExchange(&PCF->BASCULE,0);
 				PCF->bufin="";					
 			}
