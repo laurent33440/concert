@@ -1020,6 +1020,8 @@ int CConcertoDlg::ImportFichierAtrium(CString source)
 	hfr=CreateFile(source,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
 	if(ReadFile(hfr,buf.GetBuffer(GetFileSize(hfr,NULL)),GetFileSize(hfr,NULL),&len,NULL))
 	{
+		//Exemple de ligne Atrium à importer
+		//150918-0003;82;1;962c6827;Schoeny Damien;2015-09-18 13:04:26;Non spécifié;1 x Prévente avec conso (1 x 16.00 euros)
 		CloseHandle(hfr);
 		buf.ReleaseBuffer(len);
 		buf.Replace("\"","");
